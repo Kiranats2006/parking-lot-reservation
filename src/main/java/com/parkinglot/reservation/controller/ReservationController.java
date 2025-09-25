@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,7 @@ import com.parkinglot.reservation.exception.ResourceNotFoundException;
 import com.parkinglot.reservation.model.ParkingSlot;
 import com.parkinglot.reservation.model.Reservation;
 import com.parkinglot.reservation.repository.ParkingSlotRepository;
+import com.parkinglot.reservation.repository.ReservationRepository;
 import com.parkinglot.reservation.service.ReservationService;
 
 @RestController
@@ -26,6 +29,9 @@ public class ReservationController {
 
     @Autowired
     private ParkingSlotRepository slotRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @PostMapping
     public ResponseEntity<Reservation> createReservation(@RequestParam String vehicleNumber, @RequestParam String vehicleType, @RequestParam Long slotId, @RequestParam String startTime, @RequestParam String endTime) {
@@ -50,5 +56,23 @@ public class ReservationController {
             return ResponseEntity.ok("No slots available for the selected time. Check console for next available slots.");
         }
         return ResponseEntity.ok(available);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new com.parkinglot.reservation.exception.ResourceNotFoundException(
+                        "Reservation not found with id " + id));
+        return ResponseEntity.ok(reservation);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new com.parkinglot.reservation.exception.ResourceNotFoundException(
+                        "Reservation not found with id " + id));
+
+        reservationRepository.delete(reservation);
+        return ResponseEntity.ok("Reservation cancelled successfully: " + reservation.getReservationToken());
     }
 }
