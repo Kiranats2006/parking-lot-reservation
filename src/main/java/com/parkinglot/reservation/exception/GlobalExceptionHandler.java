@@ -2,6 +2,7 @@ package com.parkinglot.reservation.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSlotUnavailable(SlotUnavailableException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
-
+    
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<String> handleInvalidRequest(InvalidRequestException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -28,4 +29,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Something went wrong: " + ex.getMessage(),
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<String> handleOptimisticLock(ObjectOptimisticLockingFailureException ex) {
+        return new ResponseEntity<>("Reservation conflict occurred. Please try again.", HttpStatus.CONFLICT);
+    }
+
 }
