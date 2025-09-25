@@ -1,18 +1,20 @@
 package com.parkinglot.reservation.service;
 
-import com.parkinglot.reservation.exception.InvalidRequestException;
-import com.parkinglot.reservation.exception.SlotUnavailableException;
-import com.parkinglot.reservation.model.ParkingSlot;
-import com.parkinglot.reservation.model.Reservation;
-import com.parkinglot.reservation.repository.ReservationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.parkinglot.reservation.exception.InvalidRequestException;
+import com.parkinglot.reservation.exception.SlotUnavailableException;
+import com.parkinglot.reservation.model.ParkingSlot;
+import com.parkinglot.reservation.model.Reservation;
+import com.parkinglot.reservation.repository.ReservationRepository;
 
 @Service
 public class ReservationService {
@@ -59,4 +61,20 @@ public class ReservationService {
         Reservation reservation = new Reservation(vehicleNumber, vehicleType, startTime, endTime, totalCost, slot);
         return reservationRepository.save(reservation);
     }
+
+    public List<ParkingSlot> getAvailableSlots(LocalDateTime startTime, LocalDateTime endTime, List<ParkingSlot> allSlots) {
+    if (startTime.isAfter(endTime)) {
+        throw new InvalidRequestException("Start time must be before end time");
+    }
+
+    // Filter slots with no overlapping reservations
+    List<ParkingSlot> available = allSlots.stream().filter(slot -> {
+        List<Reservation> overlapping = reservationRepository
+                .findBySlotAndEndTimeAfterAndStartTimeBefore(slot, startTime, endTime);
+        return overlapping.isEmpty();
+    }).collect(Collectors.toList());
+
+    return available;
+}
+
 }
