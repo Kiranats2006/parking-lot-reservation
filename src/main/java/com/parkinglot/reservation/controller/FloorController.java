@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.parkinglot.reservation.exception.InvalidRequestException;
 import com.parkinglot.reservation.model.Floor;
 import com.parkinglot.reservation.service.FloorService;
 
@@ -22,6 +23,9 @@ public class FloorController {
     // POST /floors
     @PostMapping
     public ResponseEntity<Floor> createFloor(@RequestParam @Valid String name) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidRequestException("Floor name cannot be empty");
+        }
         Floor floor = floorService.createFloor(name);
         return ResponseEntity.ok(floor);
     }
