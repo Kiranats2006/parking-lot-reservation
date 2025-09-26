@@ -156,9 +156,9 @@ DELETE /reservations/{id}
 
 ## Deployment
 
-Deployed backend to **[Add your deployment platform here, e.g., Render, Heroku, or Railway]**.
+Deployed backend to Render.
 
-**Deployment Link:** [Parking Lot Reservation API](YOUR_DEPLOYMENT_LINK_HERE)
+**Deployment Link:** [Parking Lot Reservation API](https://parking-lot-reservation.onrender.com)
 
 
 ## Future Improvements

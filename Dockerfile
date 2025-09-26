@@ -19,6 +19,11 @@ COPY src ./src
 # Package the app (skip tests for faster build)
 RUN ./mvnw clean package -DskipTests
 
+# Set environment variables for MySQL connection
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/reservation?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_PASSWORD=YourNewPassword123!
+
 # Expose Spring Boot default port
 EXPOSE 8080
 
