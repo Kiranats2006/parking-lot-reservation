@@ -96,22 +96,49 @@ Coverage reports (if JaCoCo is enabled) will be in:
 target/site/jacoco/index.html
 ```
 
-Open this file in a browser to see detailed coverage per class and method.
+Open this file in a browser to see detailed coverage per class and method:
+![alt text](image-1.png)
 
 
 ## API Endpoints
 
-* **Create Reservation**
+### Floor & Slot Management
+
+* **Create Floor**
 
 ```http
-POST /reservations
+POST /floors
+Params: floorNumber
+```
+
+* **Create Slots for a Floor**
+
+```http
+POST /slots
+Params: floorId, slotNumber, vehicleType
+```
+
+### Reservation Management
+
+* **Reserve a Slot**
+
+```http
+POST /reserve
 Params: vehicleNumber, vehicleType, slotId, startTime, endTime
 ```
 
-* **Check Availability**
+* Must check availability (no overlapping reservations for that slot)
+* Must calculate cost based on hourly rate:
+
+  * 4-wheeler: Rs. 30/hour
+  * 2-wheeler: Rs. 20/hour
+* Partial hours are rounded up
+* Supports adding new vehicle types and rate changes
+
+- **List Available Slots**
 
 ```http
-GET /reservations/availability?startTime=<ISO_DATE>&endTime=<ISO_DATE>
+GET /availability?startTime=<ISO_DATE>&endTime=<ISO_DATE>
 ```
 
 * **Get Reservation Details**

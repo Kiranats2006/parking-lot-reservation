@@ -1,6 +1,7 @@
 package com.parkinglot.reservation.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
@@ -104,4 +105,21 @@ public class ReservationServiceTest {
         assertThrows(InvalidRequestException.class,
             () -> reservationService.getAvailableSlots(end, start, List.of(slot)));
     }
+
+    @Test
+    void testCreateReservation_HoursRoundedUp() {
+        // 2 hours 30 minutes duration
+        LocalDateTime endNonWhole = start.plusHours(2).plusMinutes(30);
+        
+        Reservation saved = new Reservation("KA01AB1234", "4-wheeler", start, endNonWhole, 90, slot);
+        when(reservationRepository.findBySlotAndEndTimeAfterAndStartTimeBefore(slot, start, endNonWhole))
+            .thenReturn(Collections.emptyList());
+        when(reservationRepository.save(any())).thenReturn(saved);
+
+        Reservation result = reservationService.createReservation("KA01AB1234", "4-wheeler", start, endNonWhole, slot);
+
+        // 2.5 hours → rounds up to 3 hours, rate 30 → 3*30 = 90
+        assertEquals(90, result.getTotalCost());
+    }
+
 }
