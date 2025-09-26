@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Reservation {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Version
@@ -39,7 +39,7 @@ public class Reservation {
     @JoinColumn(name = "slot_id")
     private ParkingSlot slot;
 
-    public Reservation(String vehicleNumber, String vehicleType,LocalDateTime startTime, LocalDateTime endTime,int totalCost, ParkingSlot slot) {
+    public Reservation(String vehicleNumber, String vehicleType, LocalDateTime startTime, LocalDateTime endTime, int totalCost, ParkingSlot slot) {
         this.vehicleNumber = vehicleNumber;
         this.vehicleType = vehicleType;
         this.startTime = startTime;
@@ -47,5 +47,34 @@ public class Reservation {
         this.totalCost = totalCost;
         this.slot = slot;
         this.reservationToken = UUID.randomUUID().toString();
+    }
+
+    // Explicit getters needed for tests
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public int getTotalCost() {
+        return totalCost;
+    }
+
+    public ParkingSlot getSlot() {
+        return slot;
+    }
+
+    public String getReservationToken() {
+        return reservationToken;
     }
 }

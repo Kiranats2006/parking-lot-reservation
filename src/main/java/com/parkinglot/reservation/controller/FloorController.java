@@ -1,6 +1,5 @@
 package com.parkinglot.reservation.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +16,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/floors")
 public class FloorController {
 
-    @Autowired
-    private FloorService floorService;
+    private final FloorService floorService;
+
+    public FloorController(FloorService floorService) {
+        this.floorService = floorService;
+    }
 
     // POST /floors
     @PostMapping
