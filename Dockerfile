@@ -1,20 +1,22 @@
-# Use official OpenJDK 17
 FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 
 # Copy Maven wrapper and pom.xml first for caching
-COPY mvnw .
+COPY mvnw . 
 COPY .mvn .mvn
 COPY pom.xml .
-
-# Copy source code
-COPY src ./src
 
 # Make mvnw executable
 RUN chmod +x ./mvnw
 
-# Run all tests and build the jar
+# Resolve dependencies first (optional, improves build caching)
+RUN ./mvnw dependency:resolve
+
+# Copy source code
+COPY src ./src
+
+# Package the app (skip tests for faster build)
 RUN ./mvnw clean package -DskipTests
 
 # Expose Spring Boot default port
