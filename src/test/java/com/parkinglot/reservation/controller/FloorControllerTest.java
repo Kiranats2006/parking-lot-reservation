@@ -43,4 +43,14 @@ class FloorControllerTest {
 
         assertEquals("Floor name cannot be empty", exception.getMessage());
     }
+
+    @Test
+    void testCreateFloorNullName() {
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
+            floorController.createFloor(null);
+        });
+
+        assertEquals("Floor name cannot be empty", exception.getMessage());
+    }
+
 }

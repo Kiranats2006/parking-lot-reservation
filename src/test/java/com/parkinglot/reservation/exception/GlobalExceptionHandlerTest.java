@@ -2,8 +2,13 @@ package com.parkinglot.reservation.exception;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,5 +82,18 @@ public class GlobalExceptionHandlerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Something went wrong: Generic error test"));
     }
+
+    @Test
+    void testHandleOptimisticLockDirectly() {
+        GlobalExceptionHandler handler = new GlobalExceptionHandler();
+        ObjectOptimisticLockingFailureException ex =
+                new ObjectOptimisticLockingFailureException("Conflict", new Object());
+
+        ResponseEntity<String> response = handler.handleOptimisticLock(ex);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Reservation conflict occurred. Please try again.", response.getBody());
+    }
+
     
 }
