@@ -7,20 +7,17 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Make mvnw executable
 RUN chmod +x ./mvnw
 
-# Resolve dependencies first (optional, improves build caching)
+# Resolve dependencies
 RUN ./mvnw dependency:resolve
 
-# Copy source code
+# Copy source
 COPY src ./src
 
-# Package the app (skip tests for faster build)
+# Package app
 RUN ./mvnw clean package -DskipTests
 
-# Expose Spring Boot default port
 EXPOSE 8080
 
-# Run the Spring Boot jar
 CMD ["java", "-jar", "target/reservation-0.0.1-SNAPSHOT.jar"]
