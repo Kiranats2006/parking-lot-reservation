@@ -1,0 +1,26 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: parking-lot-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: YourNewPassword123!
+      MYSQL_DATABASE: reservation
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: parking-lot-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/reservation?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: YourNewPassword123!
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
